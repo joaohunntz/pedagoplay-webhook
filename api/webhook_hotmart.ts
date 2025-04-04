@@ -5,19 +5,23 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export default async function handler(req: any, res: any) {
-  if (req.method !== 'POST') return res.status(405).send('Only POST allowed')
+  if (req.method !== 'POST') {
+    return res.status(405).send('Only POST allowed')
+  }
 
   const data = req.body?.data
   const event = req.body?.event
 
   try {
     const email = data?.buyer?.email
-
     if (!email) return res.status(400).send('Email não fornecido')
 
-    const data_inicio = new Date()
-    const data_expiracao = new Date()
-    data_expiracao.setFullYear(data_inicio.getFullYear() + 1)
+    // cria datas em formato "yyyy-mm-dd" para colunas do tipo date
+    const hoje = new Date()
+    const data_inicio = hoje.toISOString().split('T')[0] // "2025-04-04"
+    const data_expiracao = new Date(hoje)
+    data_expiracao.setFullYear(data_expiracao.getFullYear() + 1)
+    const data_expiracao_formatada = data_expiracao.toISOString().split('T')[0]
 
     if (event === 'PURCHASE_APPROVED') {
       await supabase.from('users').upsert({
@@ -25,7 +29,7 @@ export default async function handler(req: any, res: any) {
         status: 'ativo',
         plano: 'anual 57',
         data_inicio,
-        data_expiracao
+        data_expiracao: data_expiracao_formatada
       }, { onConflict: 'email' })
 
       await fetch('https://api.resend.com/emails', {
@@ -38,7 +42,12 @@ export default async function handler(req: any, res: any) {
           from: 'noreply@oabcards.com',
           to: email,
           subject: 'Bem-vindo ao OAB Cards! 🎉',
-          html: `<h1>Seu acesso está liberado!</h1><p>Olá, tudo certo! Você agora tem acesso ao OAB Cards por 1 ano.</p><p>Use o e-mail <strong>${email}</strong> para entrar no aplicativo.</p><p><a href="https://oabcards.com">Acessar agora</a></p>`
+          html: `
+            <h1>Seu acesso está liberado!</h1>
+            <p>Olá, tudo certo! Você agora tem acesso ao OAB Cards por 1 ano.</p>
+            <p>Use o e-mail <strong>${email}</strong> para entrar no aplicativo.</p>
+            <p><a href="https://oabcards.com">Acessar agora</a></p>
+          `
         })
       })
 
@@ -47,7 +56,6 @@ export default async function handler(req: any, res: any) {
     }
 
     return res.status(200).send('OK')
-
   } catch (err: any) {
     console.error('Erro interno no webhook:', err)
     return res.status(500).send('Erro interno')
