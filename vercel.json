@@ -1,14 +1,15 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "api/webhook_hotmart.js",
+      "src": "api/webhook_hotmart.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/webhook_hotmart",
-      "dest": "api/webhook_hotmart.js"
+      "dest": "api/webhook_hotmart.ts"
     }
   ]
 }
