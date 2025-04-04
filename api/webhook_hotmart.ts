@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = 'https://gsvaxymcflhkossiixkf.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzdmF4eW1jZmxoa29zc2lpeGtmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0Mzc3ODM4MCwiZXhwIjoyMDU5MzU0MzgwfQ.eo1xd_TcFTXyqh_XaU02kumFsEv82UcPgrUS70Vn2Rg'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export default async function handler(req: any, res: any) {
@@ -15,19 +15,19 @@ export default async function handler(req: any, res: any) {
   const { data, event } = req.body
   console.log('[HOTMART] Evento:', event)
 
+  // Captura o e-mail de forma inteligente, independente do tipo de evento
+  const email = data?.buyer?.email || data?.subscriber?.email
+  console.log('[HOTMART] Email:', email)
+
+  if (!email) return res.status(400).send('Email não fornecido')
+
   try {
-    const email = data?.buyer?.email
-    console.log('[HOTMART] Email:', email)
-
-    if (!email) return res.status(400).send('Email não fornecido')
-
     const hoje = new Date()
     const data_inicio = hoje.toISOString().split('T')[0]
     const data_expiracao = new Date(hoje)
     data_expiracao.setFullYear(data_expiracao.getFullYear() + 1)
     const data_expiracao_formatada = data_expiracao.toISOString().split('T')[0]
 
-    // 🔔 Evento de aprovação da compra
     if (event === 'PURCHASE_APPROVED') {
       console.log('[SUPABASE] Enviando dados para upsert...')
       const { error, data: responseData } = await supabase.from('users').upsert({
@@ -68,23 +68,26 @@ export default async function handler(req: any, res: any) {
       const emailJson = await emailRes.json()
       console.log('[RESEND] Resposta do envio:', emailJson)
 
-    // ❌ Evento de cancelamento ou reembolso
-    } else if (event === 'SUBSCRIPTION_CANCELED' || event === 'PURCHASE_REFUNDED') {
-      console.log('[SUPABASE] Marcando usuário como inativo...')
-      const { error: updateError } = await supabase.from('users').update({
-        status: 'inativo'
-      }).eq('email', email)
+    } else if (
+      event === 'SUBSCRIPTION_CANCELED' ||
+      event === 'PURCHASE_REFUNDED' ||
+      event === 'SUBSCRIPTION_CANCELLATION'
+    ) {
+      console.log('[SUPABASE] Marcando status como inativo...')
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ status: 'inativo' })
+        .eq('email', email)
 
       if (updateError) {
         console.error('[SUPABASE] Erro ao atualizar status:', updateError)
         return res.status(500).send('Erro ao atualizar status')
       }
-
-      console.log('[SUPABASE] Usuário marcado como inativo.')
     }
 
     console.log('[HOTMART] Tudo certo! Respondendo 200...')
     return res.status(200).send('OK')
+
   } catch (err: any) {
     console.error('[ERRO GERAL] Erro interno:', err)
     return res.status(500).send('Erro interno')
