@@ -12,12 +12,13 @@ export default async function handler(req, res) {
   const data = req.body
 
   try {
+    console.log('📦 Dados recebidos da Hotmart:', JSON.stringify(data, null, 2)) // 👈 LOG adicionado
+
     const productName = data?.product?.name
     const planName = data?.subscription_plan?.name || ''
     const email = data?.buyer?.email
     const status = data?.event
 
-    // 🔧 Ajuste temporário para testes: não exige produto/plano
     if (!email) {
       return res.status(400).send('Email não fornecido')
     }
@@ -49,7 +50,7 @@ export default async function handler(req, res) {
     return res.status(200).send('OK')
 
   } catch (err) {
-    console.error(err)
+    console.error('❌ Erro no webhook:', err) // 👈 ajuda extra para debug
     return res.status(500).send('Erro interno')
   }
 }
