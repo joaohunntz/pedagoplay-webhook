@@ -7,11 +7,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).send('Only POST allowed')
 
-  const data = req.body
+  const data = req.body?.data
+  const event = req.body?.event
 
   try {
     const email = data?.buyer?.email
-    const status = data?.event
 
     if (!email) return res.status(400).send('Email não fornecido')
 
@@ -19,7 +19,7 @@ export default async function handler(req: any, res: any) {
     const data_expiracao = new Date()
     data_expiracao.setFullYear(data_inicio.getFullYear() + 1)
 
-    if (status === 'PURCHASE_APPROVED') {
+    if (event === 'PURCHASE_APPROVED') {
       await supabase.from('users').upsert({
         email,
         status: 'ativo',
@@ -42,14 +42,14 @@ export default async function handler(req: any, res: any) {
         })
       })
 
-    } else if (status === 'SUBSCRIPTION_CANCELED' || status === 'PURCHASE_REFUNDED') {
+    } else if (event === 'SUBSCRIPTION_CANCELED' || event === 'PURCHASE_REFUNDED') {
       await supabase.from('users').update({ status: 'inativo' }).eq('email', email)
     }
 
     return res.status(200).send('OK')
 
-  } catch (err) {
-    console.error('Erro:', err)
+  } catch (err: any) {
+    console.error('Erro interno no webhook:', err)
     return res.status(500).send('Erro interno')
   }
 }
