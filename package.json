@@ -2,8 +2,12 @@
   "name": "oabcards-webhook",
   "version": "1.0.0",
   "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node api/webhook_hotmart.js"
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.6",
-    "resend": "^1.3.3"
+    "@supabase/supabase-js": "^2.39.7",
+    "resend": "^0.9.6"
   }
 }
