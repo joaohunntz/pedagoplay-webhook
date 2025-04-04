@@ -1,22 +1,26 @@
 import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = 'https://gsvaxymcflhkossiixkf.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' // sua chave completa aqui
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export default async function handler(req: any, res: any) {
+  console.log('[HOTMART] Recebido webhook')
+
   if (req.method !== 'POST') {
+    console.log('[HOTMART] Método não permitido')
     return res.status(405).send('Only POST allowed')
   }
 
-  const data = req.body?.data
-  const event = req.body?.event
+  const { data, event } = req.body
+  console.log('[HOTMART] Evento:', event)
 
   try {
     const email = data?.buyer?.email
+    console.log('[HOTMART] Email:', email)
+
     if (!email) return res.status(400).send('Email não fornecido')
 
-    // ⏱️ Formatação das datas para colunas tipo DATE
     const hoje = new Date()
     const data_inicio = hoje.toISOString().split('T')[0]
     const data_expiracao = new Date(hoje)
@@ -24,32 +28,27 @@ export default async function handler(req: any, res: any) {
     const data_expiracao_formatada = data_expiracao.toISOString().split('T')[0]
 
     if (event === 'PURCHASE_APPROVED') {
-      console.log('🟢 Compra aprovada para:', email)
-
-      const { error, data: supaResponse } = await supabase.from('users').upsert({
+      console.log('[SUPABASE] Enviando dados para upsert...')
+      const { error, status, data: responseData } = await supabase.from('users').upsert({
         email,
         status: 'ativo',
         plano: 'anual 57',
         data_inicio,
         data_expiracao: data_expiracao_formatada
-      }, {
-        onConflict: 'email'
-      })
+      }, { onConflict: 'email' })
 
       if (error) {
-        console.error('❌ Erro ao salvar no Supabase:', error)
+        console.error('[SUPABASE] Erro:', error)
         return res.status(500).send('Erro ao salvar no Supabase')
       }
 
-      console.log('✅ Salvo no Supabase com sucesso:', supaResponse)
+      console.log('[SUPABASE] Dados inseridos com sucesso:', responseData)
 
-      // 📧 Envio de e-mail
-      console.log('✉️ Enviando e-mail para:', email)
-
-      const response = await fetch('https://api.resend.com/emails', {
+      console.log('[RESEND] Enviando e-mail...')
+      const emailRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer re_MMVw4EJ1_MtuepBApAnQXaRvBYp66Pbie', // token correto aqui
+          'Authorization': 'Bearer re_MMVw4EJ1_MtuepBApAnQXaRvBYp66Pbie',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -65,28 +64,23 @@ export default async function handler(req: any, res: any) {
         })
       })
 
-      const result = await response.json()
-      console.log('📬 Resposta do Resend:', response.status, result)
+      const emailJson = await emailRes.json()
+      console.log('[RESEND] Resposta do envio:', emailJson)
 
     } else if (event === 'SUBSCRIPTION_CANCELED' || event === 'PURCHASE_REFUNDED') {
-      console.log('🔴 Cancelamento ou reembolso detectado para:', email)
-
-      const { error: updateError } = await supabase.from('users').update({
-        status: 'inativo'
-      }).eq('email', email)
+      console.log('[SUPABASE] Marcando status como inativo...')
+      const { error: updateError } = await supabase.from('users').update({ status: 'inativo' }).eq('email', email)
 
       if (updateError) {
-        console.error('❌ Erro ao atualizar status:', updateError)
+        console.error('[SUPABASE] Erro ao atualizar status:', updateError)
         return res.status(500).send('Erro ao atualizar status')
       }
-
-      console.log('🟡 Status atualizado para inativo')
     }
 
+    console.log('[HOTMART] Tudo certo! Respondendo 200...')
     return res.status(200).send('OK')
-
   } catch (err: any) {
-    console.error('🔥 Erro interno no webhook:', err)
+    console.error('[ERRO GERAL] Erro interno:', err)
     return res.status(500).send('Erro interno')
   }
 }
