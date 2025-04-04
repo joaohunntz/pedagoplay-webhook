@@ -17,8 +17,9 @@ export default async function handler(req, res) {
     const email = data?.buyer?.email
     const status = data?.event
 
-    if (productName !== 'OAB Cards' || planName.toLowerCase() !== 'anual 57') {
-      return res.status(200).send('Produto ou plano ignorado')
+    // 🔧 Ajuste temporário para testes: não exige produto/plano
+    if (!email) {
+      return res.status(400).send('Email não fornecido')
     }
 
     const data_inicio = new Date()
