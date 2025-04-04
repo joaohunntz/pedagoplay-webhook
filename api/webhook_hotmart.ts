@@ -18,19 +18,26 @@ export default async function handler(req: any, res: any) {
 
     // cria datas em formato "yyyy-mm-dd" para colunas do tipo date
     const hoje = new Date()
-    const data_inicio = hoje.toISOString().split('T')[0] // "2025-04-04"
+    const data_inicio = hoje.toISOString().split('T')[0]
     const data_expiracao = new Date(hoje)
     data_expiracao.setFullYear(data_expiracao.getFullYear() + 1)
     const data_expiracao_formatada = data_expiracao.toISOString().split('T')[0]
 
     if (event === 'PURCHASE_APPROVED') {
-      await supabase.from('users').upsert({
+      const { error, status, data: responseData } = await supabase.from('users').upsert({
         email,
         status: 'ativo',
         plano: 'anual 57',
         data_inicio,
         data_expiracao: data_expiracao_formatada
       }, { onConflict: 'email' })
+
+      if (error) {
+        console.error('Erro ao inserir no Supabase:', error)
+        return res.status(500).send('Erro ao salvar no Supabase')
+      } else {
+        console.log('Inserção no Supabase realizada com sucesso:', responseData)
+      }
 
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -52,7 +59,12 @@ export default async function handler(req: any, res: any) {
       })
 
     } else if (event === 'SUBSCRIPTION_CANCELED' || event === 'PURCHASE_REFUNDED') {
-      await supabase.from('users').update({ status: 'inativo' }).eq('email', email)
+      const { error: updateError } = await supabase.from('users').update({ status: 'inativo' }).eq('email', email)
+
+      if (updateError) {
+        console.error('Erro ao atualizar status para inativo:', updateError)
+        return res.status(500).send('Erro ao atualizar status')
+      }
     }
 
     return res.status(200).send('OK')
