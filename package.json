@@ -2,8 +2,13 @@
   "name": "oabcards-webhook",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "start": "vercel start"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.5",
-    "resend": "0.3.7"
+    "resend": "^0.24.0"
   }
 }
