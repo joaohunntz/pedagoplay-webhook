@@ -60,7 +60,7 @@ export default async function handler(req: any, res: any) {
             <h1>Seu acesso está liberado!</h1>
             <p>Olá, tudo certo! Você agora tem acesso ao OAB Cards por 1 ano.</p>
             <p>Use o e-mail <strong>${email}</strong> para entrar no aplicativo.</p>
-            <p><a href="https://oabcards.com">Acessar agora</a></p>
+            <p><a href="https://app.oabcards.com">Acessar agora</a></p>
           `
         })
       })
