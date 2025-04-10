@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = 'https://yglvnamoudgwbaigeypu.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlnbHZuYW1vdWRnd2JhaWdleXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyNDU2NjAsImV4cCI6MjA1OTgyMTY2MH0.lgXkGzXQGfTIYZudXDmqIiGho6bcoOWinZRoA946-Ik'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlnbHZuYW1vdWRnd2JhaWdleXB1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDI0NTY2MCwiZXhwIjoyMDU5ODIxNjYwfQ.IC8i7I79zYYNwU8U56w2Y_4BardcMDa1P4N-gn_LKLY'
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export default async function handler(req: any, res: any) {
