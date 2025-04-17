@@ -55,12 +55,12 @@ export default async function handler(req: any, res: any) {
         body: JSON.stringify({
           from: 'noreply@pedagoteca.io',
           to: email,
-          subject: 'Bem-vindo ao OAB Cards! 🎉',
+          subject: 'Bem-vindo a Pedagoteca! 🎉',
           html: `
             <h1>Seu acesso está liberado!</h1>
-            <p>Olá, tudo certo! Você agora tem acesso ao OAB Cards por 1 ano.</p>
-            <p>Use o e-mail <strong>${email}</strong> para entrar no aplicativo.</p>
-            <p><a href="https://app.oabcards.com">Acessar agora</a></p>
+            <p>Olá, tudo certo! Você agora tem acesso ao aplicativo da Pedagoteca por 1 ano.</p>
+            <p>Use o e-mail do Google para entrar no aplicativo e não esqueça de fazer a instalação do aplicativo antes no botão indicado.</p>
+            <p><a href="https://pedagoteca-pwa.vercel.app/">Acessar agora</a></p>
           `
         })
       })
