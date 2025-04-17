@@ -53,7 +53,7 @@ export default async function handler(req: any, res: any) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: 'noreply@oabcards.com',
+          from: 'noreply@pedagoteca.io',
           to: email,
           subject: 'Bem-vindo ao OAB Cards! 🎉',
           html: `
