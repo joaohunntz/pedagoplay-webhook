@@ -58,8 +58,9 @@ export default async function handler(req: any, res: any) {
           subject: 'Bem-vindo a Pedagoteca! 🎉',
           html: `
             <h1>Seu acesso está liberado!</h1>
-            <p>Olá, tudo certo! Você agora tem acesso ao aplicativo da Pedagoteca por 1 ano.</p>
-            <p>Use o e-mail do Google para entrar no aplicativo e não esqueça de fazer a instalação do aplicativo antes no botão indicado.</p>
+            <p>Olá, seu plano de acesso a Pedagoteca está pronto!!.</p>
+            <p>Utilize seu email Google para fazer login no nosso aplicativo e não esqueça de fazer a instalação do aplicativo no botão indicado.</p>
+            <p>Qualquer dúvida não existe em enviar um email para pedagotecabrasil@gmail.com </p>
             <p><a href="https://pedagoteca-pwa.vercel.app/">Acessar agora</a></p>
           `
         })
