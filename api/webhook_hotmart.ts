@@ -53,9 +53,9 @@ export default async function handler(req: any, res: any) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: 'noreply@pedagoteca.io',
+          from: 'noreply@pedagoplay.click',
           to: email,
-          subject: 'Bem-vindo a Pedagoteca! 🎉',
+          subject: 'Welcome to PedagoPlay! 🎉',
           html: `
             <h1>Seu acesso está liberado!</h1>
             <p>Olá, seu plano de acesso a Pedagoteca está pronto!!.</p>
