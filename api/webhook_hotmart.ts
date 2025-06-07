@@ -78,9 +78,9 @@ export default async function handler(req: any, res: any) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: 'noreply@pedagoplay.click',
+          from: 'noreply@psiq.app',
           to: email,
-          subject: 'Welcome to PedagoPlay! 🎉',
+          subject: 'Seu acesso ao PsiQ chegou! 🎉',
           html: `
             <h1>Seu acesso está liberado!</h1>
             <p>Olá, sua chave de acesso ao PsiQ está pronta.</p>
@@ -88,9 +88,9 @@ export default async function handler(req: any, res: any) {
             <pre style="font-size: 20px; background: #f5f5f5; padding: 10px; border-radius: 5px;">
 ${chaveDeAcesso}
             </pre>
-            <p>Utilize seu e-mail Google para fazer login no aplicativo e insira a chave acima para liberar as funções premium.</p>
-            <p>Qualquer dúvida, envie um e-mail para pedagotecabrasil@gmail.com </p>
-            <p><a href="https://pedagoteca-pwa.vercel.app/">Acessar agora</a></p>
+            <p>Utilize seu e-mail de compra + a chave de acesso acima para acessar o PsiQ.</p>
+            <p>Qualquer dúvida, envie um e-mail para contato@psiq.app </p>
+            <p><a href="https://login.psiq.app/">Clique para Acessar agora</a></p>
           `
         })
       })
