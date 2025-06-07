@@ -45,6 +45,31 @@ export default async function handler(req: any, res: any) {
 
       console.log('[SUPABASE] Dados inseridos com sucesso:', responseData)
 
+      // 🔑 Buscar chave disponível em psiq_keys
+      const { data: chaveDisponivel, error: erroChave } = await supabase
+        .from('psiq_keys')
+        .select('key')
+        .eq('used', false)
+        .limit(1)
+        .single()
+
+      if (erroChave || !chaveDisponivel) {
+        console.error('[SUPABASE] Erro ao buscar chave:', erroChave)
+        return res.status(500).send('Erro ao gerar chave de acesso')
+      }
+
+      const chaveDeAcesso = chaveDisponivel.key
+
+      // ✅ Marcar chave como usada
+      await supabase
+        .from('psiq_keys')
+        .update({
+          used: true,
+          used_by_email: email,
+          used_at: new Date()
+        })
+        .eq('key', chaveDeAcesso)
+
       console.log('[RESEND] Enviando e-mail...')
       const emailRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -58,9 +83,13 @@ export default async function handler(req: any, res: any) {
           subject: 'Welcome to PedagoPlay! 🎉',
           html: `
             <h1>Seu acesso está liberado!</h1>
-            <p>Olá, seu plano de acesso a Pedagoteca está pronto!!.</p>
-            <p>Utilize seu email Google para fazer login no nosso aplicativo e não esqueça de fazer a instalação do aplicativo no botão indicado.</p>
-            <p>Qualquer dúvida não hesite em enviar um email para pedagotecabrasil@gmail.com </p>
+            <p>Olá, sua chave de acesso ao PsiQ está pronta.</p>
+            <p><strong>Sua chave de ativação:</strong></p>
+            <pre style="font-size: 20px; background: #f5f5f5; padding: 10px; border-radius: 5px;">
+${chaveDeAcesso}
+            </pre>
+            <p>Utilize seu e-mail Google para fazer login no aplicativo e insira a chave acima para liberar as funções premium.</p>
+            <p>Qualquer dúvida, envie um e-mail para pedagotecabrasil@gmail.com </p>
             <p><a href="https://pedagoteca-pwa.vercel.app/">Acessar agora</a></p>
           `
         })
