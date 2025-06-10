@@ -80,17 +80,17 @@ export default async function handler(req: any, res: any) {
         body: JSON.stringify({
           from: 'noreply@psiq.app',
           to: email,
-          subject: 'Seu acesso ao PsiQ chegou! 🎉',
+          subject: 'Il tuo accesso a PsiQ è arrivato! 🎉',
           html: `
-            <h1>Seu acesso está liberado!</h1>
-            <p>Olá, sua chave de acesso ao PsiQ está pronta.</p>
-            <p><strong>Sua chave de ativação:</strong></p>
+            <h1>Accesso rilasciato!</h1>
+            <p>Ciao, la tua chiave di accesso PsiQ è pronta.</p>
+            <p><strong>La tua chiave di attivazione:</strong></p>
             <pre style="font-size: 20px; background: #f5f5f5; padding: 10px; border-radius: 5px;">
 ${chaveDeAcesso}
             </pre>
-            <p>Utilize seu e-mail de compra + a chave de acesso acima para acessar o PsiQ.</p>
-            <p>Qualquer dúvida, envie um e-mail para contato@psiq.app </p>
-            <p><a href="https://login.psiq.app/">Clique para Acessar agora</a></p>
+            <p>Utilizza l'email con cui hai effettuato l'acquisto + la chiave di accesso sopra indicata per accedere a PsiQ.</p>
+            <p>Per qualsiasi domanda, inviare un'e-mail a contato@psiq.app </p>
+            <p><a href="https://login.psiq.app/">Fare clic per accedere ora</a></p>
           `
         })
       })
