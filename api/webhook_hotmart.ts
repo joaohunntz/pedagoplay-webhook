@@ -78,19 +78,19 @@ export default async function handler(req: any, res: any) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: 'noreply@psiq.app',
+          from: 'noreply@pedagoteca.io',
           to: email,
-          subject: 'Seu acesso ao PsiQ chegou! 🎉',
+          subject: 'Your Pedagoteca access is ready! 🎉',
           html: `
-            <h1>Acesso liberado!</h1>
-            <p>Olá, sua chave de acesso ao PsiQ está pronta.</p>
-            <p><strong>Sua chave de ativação:</strong></p>
+            <h1>Your access is unlocked!</h1>
+            <p>Hello! Your access key to <strong>Pedagoteca</strong> is ready.</p>
+            <p><strong>Your access key:</strong></p>
             <pre style="font-size: 20px; background: #f5f5f5; padding: 10px; border-radius: 5px;">
-${chaveDeAcesso}
+pedagoteca25
             </pre>
-            <p>Use o e-mail com o qual você realizou a compra + a chave de acesso acima para entrar no PsiQ.</p>
-            <p>Para qualquer dúvida, envie um e-mail para contato@psiq.app </p>
-            <p><a href="https://login.psiq.app/">Clique aqui para acessar agora</a></p>
+            <p>Enter your name, the email used for the purchase, and your access key to unlock the premium features inside the app.</p>
+            <p>If you have any questions, feel free to email us at <a href="mailto:suport@pedagoteca.io">suport@pedagoteca.io</a>.</p>
+           <p><a href="https://pedagoteca.site/" target="_blank">Click here to install the app</a></p>
           `
         })
       })
